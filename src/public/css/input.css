@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/*
+  Typing Course - Design System
+  Tema fokus latihan mengetik: monokrom gelap terang, satu aksen hijau/teal
+  untuk elemen interaktif, font mono untuk teks latihan.
+*/
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-base: #f7f7f5;
+  --color-surface: #ffffff;
+  --color-ink: #1c1917;
+  --color-ink-soft: #57534e;
+
+  --color-accent: #0f766e;
+  --color-accent-soft: #ecfdf5;
+
+  --color-line: #e7e5e4;
+  --color-line-strong: #d6d3d1;
+
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+
+  --shadow-card: 0 1px 2px rgb(28 25 23 / 0.05), 0 4px 16px rgb(28 25 23 / 0.06);
+  --shadow-lift: 0 8px 30px rgb(28 25 23 / 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+/* Teks latihan mengetik */
+.type-text {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  line-height: 1.9;
+  word-spacing: 0.2em;
+  letter-spacing: 0.01em;
+  white-space: pre-wrap;
+}
+
+.type-correct {
+  color: #16a34a;
+}
+
+.type-wrong {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+  border-radius: 3px;
+}
+
+.type-current {
+  background: rgba(15, 118, 110, 0.18);
+  border-radius: 3px;
+}
+
+.type-plain {
+  color: #a8a29e;
+}
+
+/* Input tersembunyi untuk mengetik */
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
