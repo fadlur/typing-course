@@ -44,7 +44,8 @@ document.addEventListener("alpine:init", () => {
 
     /** Render teks menjadi per-karakter span. */
     renderText() {
-      const display = this.$refs.textDisplay;
+      const display =
+        this.$refs.textDisplay || this.$root?.querySelector(".type-text");
       if (!display) return;
       display.innerHTML = "";
       this.charEls = [];
@@ -66,7 +67,8 @@ document.addEventListener("alpine:init", () => {
           const msg = JSON.parse(e.data);
           if (msg.type === "leaderboard") {
             this.leaderboard = msg.leaderboard || [];
-            this.participantCount = msg.participantCount ?? this.participantCount;
+            this.participantCount =
+              msg.participantCount ?? this.participantCount;
           }
         } catch {}
       };
@@ -81,7 +83,9 @@ document.addEventListener("alpine:init", () => {
       if (!name) return;
       this.nickname = name.slice(0, 20);
       // ingat nickname di cookie via server saat submit skor; untuk sekarang pakai localStorage
-      try { localStorage.setItem("typing_nickname", this.nickname); } catch {}
+      try {
+        localStorage.setItem("typing_nickname", this.nickname);
+      } catch {}
     },
 
     begin() {
@@ -93,7 +97,6 @@ document.addEventListener("alpine:init", () => {
       this.remaining = this.duration;
       this.liveWpm = 0;
       this.liveAccuracy = 100;
-      this.renderText();
       // mulai countdown
       this.timerId = setInterval(() => {
         this.remaining -= 1;
@@ -102,7 +105,7 @@ document.addEventListener("alpine:init", () => {
           this.finish();
         }
       }, 1000);
-      // fokus input setelah render
+      // fokus input; teks di-render otomatis oleh x-init pada elemen .type-text
       this.$nextTick(() => this.$refs.typeInput?.focus());
     },
 
@@ -125,13 +128,20 @@ document.addEventListener("alpine:init", () => {
       const expected = this.text[this.index];
       if (e.key === expected) {
         if (this.charEls[this.index]) {
-          this.charEls[this.index].classList.remove("type-plain", "type-wrong");
+          this.charEls[this.index].classList.remove(
+            "type-plain",
+            "type-wrong",
+            "type-current",
+          );
           this.charEls[this.index].classList.add("type-correct");
         }
       } else {
         this.errors += 1;
         if (this.charEls[this.index]) {
-          this.charEls[this.index].classList.remove("type-plain");
+          this.charEls[this.index].classList.remove(
+            "type-plain",
+            "type-current",
+          );
           this.charEls[this.index].classList.add("type-wrong");
         }
       }
@@ -147,9 +157,12 @@ document.addEventListener("alpine:init", () => {
       // hitung live
       const minutes = (Date.now() - this.startTime) / 60000;
       const correct = Math.max(0, this.totalTyped - this.errors);
-      this.liveWpm = minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
+      this.liveWpm =
+        minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
       this.liveAccuracy =
-        this.totalTyped > 0 ? Math.round((correct / this.totalTyped) * 1000) / 10 : 100;
+        this.totalTyped > 0
+          ? Math.round((correct / this.totalTyped) * 1000) / 10
+          : 100;
 
       // selesai jika teks habis
       if (this.index >= this.text.length) {
@@ -161,7 +174,9 @@ document.addEventListener("alpine:init", () => {
       if (this.finished) return;
       this.finished = true;
       if (this.timerId) clearInterval(this.timerId);
-      const durationMs = this.startTime ? Date.now() - this.startTime : this.duration * 1000;
+      const durationMs = this.startTime
+        ? Date.now() - this.startTime
+        : this.duration * 1000;
       const r = await this.submitScore(durationMs);
       if (r) {
         this.result = { wpm: r.wpm, accuracy: r.accuracy, score: r.score };
@@ -236,7 +251,8 @@ document.addEventListener("alpine:init", () => {
     },
 
     renderText() {
-      const display = this.$refs.textDisplay;
+      const display =
+        this.$refs.textDisplay || this.$root?.querySelector(".type-text");
       if (!display) return;
       display.innerHTML = "";
       this.charEls = [];
@@ -255,7 +271,7 @@ document.addEventListener("alpine:init", () => {
       this.index = 0;
       this.errors = 0;
       this.totalTyped = 0;
-      this.renderText();
+      // fokus input; teks di-render otomatis oleh x-init pada elemen .type-text
       this.$nextTick(() => this.$refs.typeInput?.focus());
     },
 
@@ -269,13 +285,20 @@ document.addEventListener("alpine:init", () => {
       const expected = this.text[this.index];
       if (e.key === expected) {
         if (this.charEls[this.index]) {
-          this.charEls[this.index].classList.remove("type-plain", "type-wrong");
+          this.charEls[this.index].classList.remove(
+            "type-plain",
+            "type-wrong",
+            "type-current",
+          );
           this.charEls[this.index].classList.add("type-correct");
         }
       } else {
         this.errors += 1;
         if (this.charEls[this.index]) {
-          this.charEls[this.index].classList.remove("type-plain");
+          this.charEls[this.index].classList.remove(
+            "type-plain",
+            "type-current",
+          );
           this.charEls[this.index].classList.add("type-wrong");
         }
       }
@@ -289,9 +312,12 @@ document.addEventListener("alpine:init", () => {
 
       const minutes = (Date.now() - this.startTime) / 60000;
       const correct = Math.max(0, this.totalTyped - this.errors);
-      this.liveWpm = minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
+      this.liveWpm =
+        minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
       this.liveAccuracy =
-        this.totalTyped > 0 ? Math.round((correct / this.totalTyped) * 1000) / 10 : 100;
+        this.totalTyped > 0
+          ? Math.round((correct / this.totalTyped) * 1000) / 10
+          : 100;
 
       if (this.index >= this.text.length) this.finish();
     },
@@ -302,9 +328,12 @@ document.addEventListener("alpine:init", () => {
       const durationMs = Date.now() - this.startTime;
       const correct = Math.max(0, this.totalTyped - this.errors);
       const minutes = durationMs / 60000;
-      const wpm = minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
+      const wpm =
+        minutes > 0 ? Math.round((correct / 5 / minutes) * 10) / 10 : 0;
       const accuracy =
-        this.totalTyped > 0 ? Math.round((correct / this.totalTyped) * 1000) / 10 : 100;
+        this.totalTyped > 0
+          ? Math.round((correct / this.totalTyped) * 1000) / 10
+          : 100;
       const score = Math.round(wpm * Math.pow(accuracy / 100, 2) * 10) / 10;
       this.result = { wpm, accuracy, score };
     },
