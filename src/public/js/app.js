@@ -411,12 +411,14 @@ document.addEventListener("alpine:init", () => {
     },
 
     labelDifficulty(d) {
-      return {
-        semua: "Semua",
-        mudah: "Mudah",
-        sedang: "Sedang",
-        sulit: "Sulit",
-      }[d] ?? d;
+      return (
+        {
+          semua: "Semua",
+          mudah: "Mudah",
+          sedang: "Sedang",
+          sulit: "Sulit",
+        }[d] ?? d
+      );
     },
 
     setDifficulty(d) {

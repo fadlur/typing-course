@@ -39,7 +39,7 @@ sessionsRoutes.get("/sesi", requireAuth, async (c) => {
      LEFT JOIN texts t ON t.id = ps.text_id
      WHERE ps.owner_id = $1
      ORDER BY ps.created_at DESC`,
-    [user.id]
+    [user.id],
   );
 
   return renderPage(
@@ -72,7 +72,10 @@ sessionsRoutes.get("/sesi", requireAuth, async (c) => {
       ) : (
         <div class="grid sm:grid-cols-2 gap-5">
           {rows.map((s) => (
-            <div key={s.id} class="bg-surface rounded-2xl border border-line shadow-card p-6 flex flex-col gap-4">
+            <div
+              key={s.id}
+              class="bg-surface rounded-2xl border border-line shadow-card p-6 flex flex-col gap-4"
+            >
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <h2 class="font-bold text-lg">{s.title}</h2>
@@ -85,7 +88,11 @@ sessionsRoutes.get("/sesi", requireAuth, async (c) => {
                 </span>
               </div>
               <p class="text-xs font-mono text-ink-soft">
-                Dibuat {new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                Dibuat{" "}
+                {new Date(s.created_at).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "short",
+                })}
               </p>
               <div class="flex items-center gap-2 mt-auto">
                 <a
@@ -105,14 +112,14 @@ sessionsRoutes.get("/sesi", requireAuth, async (c) => {
           ))}
         </div>
       )}
-    </>
+    </>,
   );
 });
 
 // ---- Buat sesi baru ----
 sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
   const texts = await all<TextRow>(
-    `SELECT id, title, category, difficulty, content FROM texts ORDER BY category, title`
+    `SELECT id, title, category, difficulty, content FROM texts ORDER BY category, title`,
   );
   return renderPage(
     c,
@@ -132,7 +139,9 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
         >
           {csrfInput(c.get("csrfToken"))}
           <div>
-            <label for="title" class="block text-sm font-medium mb-1.5">Judul Sesi</label>
+            <label for="title" class="block text-sm font-medium mb-1.5">
+              Judul Sesi
+            </label>
             <input
               type="text"
               name="title"
@@ -143,7 +152,9 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
             />
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1.5">Level Kesulitan</label>
+            <label class="block text-sm font-medium mb-1.5">
+              Level Kesulitan
+            </label>
             <div class="flex flex-wrap gap-2">
               <template
                 x-for="d in ['semua', 'mudah', 'sedang', 'sulit']"
@@ -163,7 +174,9 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
             </div>
           </div>
           <div>
-            <label for="text_id" class="block text-sm font-medium mb-1.5">Teks Latihan</label>
+            <label for="text_id" class="block text-sm font-medium mb-1.5">
+              Teks Latihan
+            </label>
             <select
               name="text_id"
               id="text_id"
@@ -178,15 +191,27 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
                 ></option>
               </template>
             </select>
-            <p class="mt-1.5 text-xs text-ink-soft" x-show="filteredTexts.length > 0">
+            <p
+              class="mt-1.5 text-xs text-ink-soft"
+              x-show="filteredTexts.length > 0"
+            >
               Pilih teks latihan yang akan diketik peserta.
             </p>
-            <p class="mt-1.5 text-xs text-red-600" x-show="filteredTexts.length === 0">
-              Tidak ada teks untuk level ini. Pilih level lain atau tambahkan teks baru.
+            <p
+              class="mt-1.5 text-xs text-red-600"
+              x-show="filteredTexts.length === 0"
+            >
+              Tidak ada teks untuk level ini. Pilih level lain atau tambahkan
+              teks baru.
             </p>
           </div>
           <div>
-            <label for="duration_seconds" class="block text-sm font-medium mb-1.5">Durasi (detik)</label>
+            <label
+              for="duration_seconds"
+              class="block text-sm font-medium mb-1.5"
+            >
+              Durasi (detik)
+            </label>
             <select
               name="duration_seconds"
               id="duration_seconds"
@@ -220,7 +245,7 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
           ></div>
         </form>
       </div>
-    </>
+    </>,
   );
 });
 
@@ -236,7 +261,10 @@ sessionsRoutes.post("/sesi/baru", requireAuth, async (c) => {
     return c.redirect("/sesi/baru");
   }
 
-  const text = await one<TextRow>(`SELECT id, title, content FROM texts WHERE id = ?`, [textId]);
+  const text = await one<TextRow>(
+    `SELECT id, title, content FROM texts WHERE id = ?`,
+    [textId],
+  );
   if (!text) {
     setFlash(c, { error: "Teks tidak ditemukan." });
     return c.redirect("/sesi/baru");
@@ -251,7 +279,7 @@ sessionsRoutes.post("/sesi/baru", requireAuth, async (c) => {
   const id = await insert(
     `INSERT INTO practice_sessions (owner_id, title, slug, text_id, text_content, duration_seconds)
      VALUES ($1, $2, $3, $4, $5, $6)`,
-    [user.id, title, slug, text.id, text.content, durationSeconds]
+    [user.id, title, slug, text.id, text.content, durationSeconds],
   );
   setFlash(c, { success: "Sesi berhasil dibuat. Bagikan link/QR-nya!" });
   return c.redirect(`/sesi/${id}`);
@@ -275,7 +303,7 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
      FROM practice_sessions ps
      LEFT JOIN texts t ON t.id = ps.text_id
      WHERE ps.id = $1`,
-    [id]
+    [id],
   );
   if (!s || s.owner_id !== user.id) {
     setFlash(c, { error: "Sesi tidak ditemukan." });
@@ -283,9 +311,19 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
   }
 
   const shareUrl = `${config.appUrl}/s/${s.slug}`;
-  const qrDataUrl = await QRCode.toDataURL(shareUrl, { margin: 1, width: 220, color: { dark: "#1c1917", light: "#ffffff" } });
+  const qrDataUrl = await QRCode.toDataURL(shareUrl, {
+    margin: 1,
+    width: 220,
+    color: { dark: "#1c1917", light: "#ffffff" },
+  });
 
-  const results = await all<{ nickname: string; wpm: number; accuracy: number; score: number; attempts: number }>(
+  const results = await all<{
+    nickname: string;
+    wpm: number;
+    accuracy: number;
+    score: number;
+    attempts: number;
+  }>(
     `SELECT
         nickname, wpm, accuracy, score, attempts
      FROM (
@@ -297,7 +335,7 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
      ) t WHERE rn = 1
      ORDER BY score DESC
      LIMIT 20`,
-    [id]
+    [id],
   );
 
   return renderPage(
@@ -307,11 +345,18 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
       <div class="max-w-3xl mx-auto">
         <div class="flex items-start justify-between gap-4 mb-6">
           <div>
-            <a href="/sesi" class="text-sm text-accent hover:underline">← Kembali ke Sesi Saya</a>
+            <a href="/sesi" class="text-sm text-accent hover:underline">
+              ← Kembali ke Sesi Saya
+            </a>
             <h1 class="text-3xl font-bold mt-2">{s.title}</h1>
             <p class="mt-1 text-ink-soft text-sm">
-              {s.text_title ?? "Teks kustom"} · {s.duration_seconds} detik · dibuat{" "}
-              {new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+              {s.text_title ?? "Teks kustom"} · {s.duration_seconds} detik ·
+              dibuat{" "}
+              {new Date(s.created_at).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </p>
           </div>
           <a
@@ -327,10 +372,16 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
           <h2 class="font-semibold mb-4">Bagikan ke peserta</h2>
           <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="bg-white border border-line rounded-xl p-3 shrink-0">
-              <img src={qrDataUrl} alt="QR code sesi" class="w-[140px] h-[140px]" />
+              <img
+                src={qrDataUrl}
+                alt="QR code sesi"
+                class="w-[140px] h-[140px]"
+              />
             </div>
             <div class="flex-1 w-full space-y-3">
-              <p class="text-sm text-ink-soft">Peserta cukup buka link ini — tanpa daftar, langsung isi nama.</p>
+              <p class="text-sm text-ink-soft">
+                Peserta cukup buka link ini — tanpa daftar, langsung isi nama.
+              </p>
               <div class="flex gap-2">
                 <input
                   type="text"
@@ -342,14 +393,18 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
                 />
                 <button
                   type="button"
-                  {...{ "@click": "navigator.clipboard.writeText($refs.link.value); $el.textContent='Tersalin ✓'; setTimeout(()=>$el.textContent='Salin',2000)" }}
+                  {...{
+                    "@click":
+                      "navigator.clipboard.writeText($refs.link.value); $el.textContent='Tersalin ✓'; setTimeout(()=>$el.textContent='Salin',2000)",
+                  }}
                   class="rounded-lg border border-line-strong px-4 py-2.5 text-sm font-semibold hover:border-ink transition-colors"
                 >
                   Salin
                 </button>
               </div>
               <p class="text-xs text-ink-soft">
-                Tamu boleh mencoba ulang berapa kali — leaderboard menampilkan skor terbaik per nama.
+                Tamu boleh mencoba ulang berapa kali — leaderboard menampilkan
+                skor terbaik per nama.
               </p>
             </div>
           </div>
@@ -358,7 +413,9 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
         {/* Teks */}
         <div class="bg-surface rounded-2xl border border-line shadow-card p-6 mb-8">
           <h2 class="font-semibold mb-3">Teks Latihan</h2>
-          <p class="type-text type-plain text-sm sm:text-base">{s.text_content}</p>
+          <p class="type-text type-plain text-sm sm:text-base">
+            {s.text_content}
+          </p>
         </div>
 
         {/* Hasil */}
@@ -383,15 +440,28 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
               </thead>
               <tbody>
                 {results.map((r, i) => (
-                  <tr key={r.nickname} class={i === 0 ? "bg-accent-soft/50" : "border-b border-line/60"}>
+                  <tr
+                    key={r.nickname}
+                    class={
+                      i === 0 ? "bg-accent-soft/50" : "border-b border-line/60"
+                    }
+                  >
                     <td class="px-6 py-3 font-mono text-ink-soft">{i + 1}</td>
                     <td class="px-6 py-3 font-medium">
                       {r.nickname}
-                      {r.attempts > 1 && <span class="ml-2 text-xs text-ink-soft">({r.attempts}×)</span>}
+                      {r.attempts > 1 && (
+                        <span class="ml-2 text-xs text-ink-soft">
+                          ({r.attempts}×)
+                        </span>
+                      )}
                     </td>
                     <td class="px-6 py-3 text-right font-mono">{r.wpm}</td>
-                    <td class="px-6 py-3 text-right font-mono">{r.accuracy}%</td>
-                    <td class="px-6 py-3 text-right font-bold text-accent">{r.score}</td>
+                    <td class="px-6 py-3 text-right font-mono">
+                      {r.accuracy}%
+                    </td>
+                    <td class="px-6 py-3 text-right font-bold text-accent">
+                      {r.score}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -399,7 +469,7 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
           )}
         </div>
       </div>
-    </>
+    </>,
   );
 });
 
@@ -407,7 +477,10 @@ sessionsRoutes.get("/sesi/:id", requireAuth, async (c) => {
 sessionsRoutes.post("/sesi/:id/hapus", requireAuth, async (c) => {
   const user = c.get("user")!;
   const id = Number(c.req.param("id"));
-  await run(`DELETE FROM practice_sessions WHERE id = $1 AND owner_id = $2`, [id, user.id]);
+  await run(`DELETE FROM practice_sessions WHERE id = $1 AND owner_id = $2`, [
+    id,
+    user.id,
+  ]);
   setFlash(c, { success: "Sesi dihapus." });
   return c.redirect("/sesi");
 });
