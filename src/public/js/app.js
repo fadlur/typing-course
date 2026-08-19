@@ -231,6 +231,7 @@ document.addEventListener("alpine:init", () => {
   Alpine.data("quickApp", () => ({
     title: "",
     text: "",
+    difficulty: "semua",
     started: false,
     finished: false,
     result: { wpm: 0, accuracy: 0, score: 0 },
@@ -248,6 +249,39 @@ document.addEventListener("alpine:init", () => {
       this.title = el.dataset.title;
       this.text = el.dataset.text;
       this.renderText();
+    },
+
+    labelDifficulty(d) {
+      return { semua: "Semua", mudah: "Mudah", sedang: "Sedang", sulit: "Sulit" }[d] ?? d;
+    },
+
+    async setDifficulty(d) {
+      if (d === this.difficulty) return;
+      this.difficulty = d;
+      // reset state mengetik sebelum ganti teks
+      this.started = false;
+      this.finished = false;
+      this.index = 0;
+      this.errors = 0;
+      this.totalTyped = 0;
+      this.liveWpm = 0;
+      this.liveAccuracy = 100;
+      await this.loadText();
+    },
+
+    async loadText() {
+      try {
+        const res = await fetch(
+          `/api/latihan/teks?difficulty=${this.difficulty}`,
+        );
+        if (!res.ok) return;
+        const t = await res.json();
+        if (!t || !t.content) return;
+        this.title = t.title;
+        this.text = t.content;
+        // render ulang jika elemen teks sedang tampil
+        this.renderText();
+      } catch {}
     },
 
     renderText() {

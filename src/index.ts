@@ -10,7 +10,7 @@ import { homeRoutes } from "./routes/home";
 import { authRoutes } from "./routes/auth";
 import { sessionsRoutes } from "./routes/sessions";
 import { practiceRoutes, practiceApi, practiceWs } from "./routes/practice";
-import { quickRoutes } from "./routes/quick";
+import { quickRoutes, quickApi } from "./routes/quick";
 
 await initDb();
 
@@ -44,6 +44,7 @@ app.route("/", homeRoutes);
 app.route("/", authRoutes);
 app.route("/", sessionsRoutes);
 app.route("/", quickRoutes);
+app.route("/", quickApi);
 app.route("/", practiceRoutes);
 app.route("/", practiceApi);
 app.route("/", practiceWs);

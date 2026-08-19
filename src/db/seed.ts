@@ -144,6 +144,83 @@ const TEXTS = [
     content:
       "Laut menyimpan kekayaan alam yang luar biasa besarnya. Menjaga kebersihan laut merupakan kewajiban kita semua.",
   },
+  {
+    title: "Belajar dari kesalahan",
+    category: "motivasi",
+    difficulty: "mudah",
+    content:
+      "Setiap kesalahan menyimpan pelajaran yang tak ternilai. Orang bijak belajar dari kegagalan dan bangkit dengan cara yang lebih baik.",
+  },
+  {
+    title: "Ketekunan membuahkan hasil",
+    category: "motivasi",
+    difficulty: "sedang",
+    content:
+      "Tidak ada kesuksesan instan tanpa proses. Ketekunan dan latihan rutin setiap hari adalah kunci menuju hasil yang memuaskan.",
+  },
+  {
+    title: "Berkomunikasi dengan baik",
+    category: "umum",
+    difficulty: "sedang",
+    content:
+      "Komunikasi yang baik dimulai dari mendengarkan dengan sungguh-sungguh. Pilih kata yang tepat dan sampaikan dengan bahasa yang jelas.",
+  },
+  {
+    title: "Etika di dunia digital",
+    category: "umum",
+    difficulty: "sedang",
+    content:
+      "Di dunia digital, setiap orang bertanggung jawab atas ucapan dan tindakannya. Saring sebelum berbagi, pikirkan sebelum menulis.",
+  },
+  {
+    title: "Perjalanan jauh",
+    category: "motivasi",
+    difficulty: "sedang",
+    content:
+      "Perjalanan seribu langkah dimulai dari satu langkah pertama. Jangan takut memulai, karena setiap usaha kecil membawa kita lebih dekat ke tujuan.",
+  },
+  {
+    title: "Teknologi dan kehidupan",
+    category: "teknologi",
+    difficulty: "mudah",
+    content:
+      "Teknologi hadir untuk mempermudah kehidupan manusia. Gunakan dengan bijak agar memberi manfaat, bukan menjadi beban.",
+  },
+  {
+    title: "Aplikasi produktif",
+    category: "teknologi",
+    difficulty: "sedang",
+    content:
+      "Aplikasi produktivitas membantu mengatur tugas dan waktu dengan rapi. Pilih yang sesuai kebutuhan agar pekerjaan berjalan lancar.",
+  },
+  {
+    title: "Analisis data",
+    category: "teknologi",
+    difficulty: "sulit",
+    content:
+      "Analisis data mengubah angka mentah menjadi informasi yang bermakna. Visualisasi yang tepat membantu kita menemukan pola yang tersembunyi.",
+  },
+  {
+    title: "Komposisi visual",
+    category: "desain",
+    difficulty: "sulit",
+    content:
+      "Komposisi visual mengatur elemen agar terlihat harmonis dan mudah dipahami. Urutan yang baik memandu mata pembaca dengan alami.",
+  },
+  {
+    title: "Desain antarmuka",
+    category: "desain",
+    difficulty: "sulit",
+    content:
+      "Desain antarmuka yang baik membuat pengguna merasa nyaman dan tidak bingung. Konsistensi dan kemudahan navigasi adalah prioritas utama.",
+  },
+  {
+    title: "Hemat air",
+    category: "sains",
+    difficulty: "mudah",
+    content:
+      "Air adalah sumber kehidupan yang harus dijaga. Gunakan air secukupnya dan jangan biarkan keran mengalir tanpa tujuan.",
+  },
 ];
 
 /** Seed teks latihan (tambahkan yang belum ada, idempotent). */

@@ -37,6 +37,25 @@ quickRoutes.get("/latihan", async (c) => {
           </p>
         </div>
 
+        {/* Pilih level kesulitan */}
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+          <template
+            x-for="d in ['semua', 'mudah', 'sedang', 'sulit']"
+            {...{ ":key": "d" }}
+          >
+            <button
+              type="button"
+              x-text="labelDifficulty(d)"
+              {...{ "@click": "setDifficulty(d)" }}
+              {...{
+                ":class":
+                  "difficulty === d ? 'bg-accent text-white border-accent' : 'bg-surface text-ink-soft border-line hover:border-ink'",
+              }}
+              class="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors"
+            ></button>
+          </template>
+        </div>
+
         <div class="bg-surface rounded-2xl border border-line shadow-card p-6 sm:p-8">
           <template x-if="!started && !finished">
             <div class="text-center py-8">
@@ -129,4 +148,23 @@ quickRoutes.get("/latihan", async (c) => {
       </div>
     </>,
   );
+});
+
+/** API teks latihan acak (dapat difilter berdasarkan level kesulitan). */
+export const quickApi = new Hono<{ Variables: AppVariables }>();
+
+quickApi.get("/api/latihan/teks", async (c) => {
+  const difficulty = String(c.req.query("difficulty") ?? "").trim();
+  const valid = ["mudah", "sedang", "sulit"];
+  const filtered = valid.includes(difficulty);
+  const text = await one<{ id: number; title: string; content: string }>(
+    filtered
+      ? `SELECT id, title, content FROM texts WHERE difficulty = $1 ORDER BY RANDOM() LIMIT 1`
+      : `SELECT id, title, content FROM texts ORDER BY RANDOM() LIMIT 1`,
+    filtered ? [difficulty] : [],
+  );
+  if (!text) {
+    return c.json({ error: "Belum ada teks untuk level ini." }, 404);
+  }
+  return c.json(text);
 });
