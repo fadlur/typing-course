@@ -51,7 +51,10 @@ app.route("/", practiceWs);
 
 // 404
 app.notFound((c) =>
-  c.html(`<h1 style="text-align:center;padding-top:4rem">404 — Halaman tidak ditemukan.</h1>`, 404)
+  c.html(
+    `<h1 style="text-align:center;padding-top:4rem">404 — Halaman tidak ditemukan.</h1>`,
+    404,
+  ),
 );
 
 // Error handler

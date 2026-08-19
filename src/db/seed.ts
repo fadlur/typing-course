@@ -233,7 +233,7 @@ export async function seedTexts(): Promise<void> {
     if (!existing) {
       await run(
         `INSERT INTO texts (title, category, difficulty, content) VALUES (?, ?, ?, ?)`,
-        [t.title, t.category, t.difficulty, t.content]
+        [t.title, t.category, t.difficulty, t.content],
       );
       inserted += 1;
     }
@@ -252,7 +252,7 @@ export async function seedAdmin(): Promise<void> {
     const hash = await hashPassword(config.admin.password);
     await run(
       `INSERT INTO users (name, email, password_hash, is_admin) VALUES (?, ?, ?, 1)`,
-      ["Admin", config.admin.email, hash]
+      ["Admin", config.admin.email, hash],
     );
     console.log(`Akun admin dibuat: ${config.admin.email}`);
   }
