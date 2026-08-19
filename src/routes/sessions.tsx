@@ -124,7 +124,12 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
           Pilih teks latihan, tentukan durasi, lalu bagikan link/QR-nya.
         </p>
 
-        <form method="post" action="/sesi/baru" class="bg-surface rounded-2xl border border-line shadow-card p-8 space-y-6">
+        <form
+          method="post"
+          action="/sesi/baru"
+          class="bg-surface rounded-2xl border border-line shadow-card p-8 space-y-6"
+          x-data="sessionFormApp()"
+        >
           {csrfInput(c.get("csrfToken"))}
           <div>
             <label for="title" class="block text-sm font-medium mb-1.5">Judul Sesi</label>
@@ -138,21 +143,46 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
             />
           </div>
           <div>
+            <label class="block text-sm font-medium mb-1.5">Level Kesulitan</label>
+            <div class="flex flex-wrap gap-2">
+              <template
+                x-for="d in ['semua', 'mudah', 'sedang', 'sulit']"
+                {...{ ":key": "d" }}
+              >
+                <button
+                  type="button"
+                  x-text="labelDifficulty(d)"
+                  {...{ "@click": "setDifficulty(d)" }}
+                  {...{
+                    ":class":
+                      "difficulty === d ? 'bg-accent text-white border-accent' : 'bg-surface text-ink-soft border-line hover:border-ink'",
+                  }}
+                  class="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors"
+                ></button>
+              </template>
+            </div>
+          </div>
+          <div>
             <label for="text_id" class="block text-sm font-medium mb-1.5">Teks Latihan</label>
             <select
               name="text_id"
               id="text_id"
               required
+              x-model="selectedTextId"
               class="w-full rounded-lg border border-line-strong bg-surface px-4 py-2.5 text-sm focus:border-accent"
             >
-              {texts.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.title} · {t.category} · {t.difficulty}
-                </option>
-              ))}
+              <template x-for="t in filteredTexts" {...{ ":key": "t.id" }}>
+                <option
+                  {...{ ":value": "String(t.id)" }}
+                  x-text="t.title + ' · ' + t.category + ' · ' + t.difficulty"
+                ></option>
+              </template>
             </select>
-            <p class="mt-1.5 text-xs text-ink-soft">
-              Tekan salah satu teks untuk melihat isinya.
+            <p class="mt-1.5 text-xs text-ink-soft" x-show="filteredTexts.length > 0">
+              Pilih teks latihan yang akan diketik peserta.
+            </p>
+            <p class="mt-1.5 text-xs text-red-600" x-show="filteredTexts.length === 0">
+              Tidak ada teks untuk level ini. Pilih level lain atau tambahkan teks baru.
             </p>
           </div>
           <div>
@@ -175,6 +205,19 @@ sessionsRoutes.get("/sesi/baru", requireAuth, async (c) => {
           >
             Buat Sesi
           </button>
+
+          <div
+            style="display:none"
+            id="session-form-data"
+            data-texts={JSON.stringify(
+              texts.map((t) => ({
+                id: t.id,
+                title: t.title,
+                category: t.category,
+                difficulty: t.difficulty,
+              })),
+            )}
+          ></div>
         </form>
       </div>
     </>

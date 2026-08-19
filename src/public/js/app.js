@@ -252,7 +252,11 @@ document.addEventListener("alpine:init", () => {
     },
 
     labelDifficulty(d) {
-      return { semua: "Semua", mudah: "Mudah", sedang: "Sedang", sulit: "Sulit" }[d] ?? d;
+      return (
+        { semua: "Semua", mudah: "Mudah", sedang: "Sedang", sulit: "Sulit" }[
+          d
+        ] ?? d
+      );
     },
 
     async setDifficulty(d) {
@@ -380,6 +384,51 @@ document.addEventListener("alpine:init", () => {
       this.totalTyped = 0;
       this.liveWpm = 0;
       this.liveAccuracy = 100;
+    },
+  }));
+
+  // Form pembuatan sesi — filter level kesulitan teks
+  Alpine.data("sessionFormApp", () => ({
+    difficulty: "semua",
+    texts: [],
+    selectedTextId: "",
+
+    init() {
+      const el = document.getElementById("session-form-data");
+      if (!el) return;
+      try {
+        this.texts = JSON.parse(el.dataset.texts || "[]");
+      } catch {}
+      if (this.texts.length) {
+        this.selectedTextId = String(this.texts[0].id);
+      }
+    },
+
+    get filteredTexts() {
+      return this.difficulty === "semua"
+        ? this.texts
+        : this.texts.filter((t) => t.difficulty === this.difficulty);
+    },
+
+    labelDifficulty(d) {
+      return {
+        semua: "Semua",
+        mudah: "Mudah",
+        sedang: "Sedang",
+        sulit: "Sulit",
+      }[d] ?? d;
+    },
+
+    setDifficulty(d) {
+      this.difficulty = d;
+      // pastikan pilihan masih tersedia pada hasil filter
+      if (
+        !this.filteredTexts.some((t) => String(t.id) === this.selectedTextId)
+      ) {
+        this.selectedTextId = this.filteredTexts.length
+          ? String(this.filteredTexts[0].id)
+          : "";
+      }
     },
   }));
 });
